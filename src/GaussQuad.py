@@ -9,7 +9,7 @@ import math
 class BasisPolynomials():
     """
     A class for calculating basis polynomials and their derivatives,
-    specifically for Legendre and Chebyshev polynomials.
+    specifically for Legendre polynomials.
     """
 
     def iterative_legendre(self, n, x):
@@ -101,22 +101,6 @@ class BasisPolynomials():
 
         return nodes, weights
 
-    def chebyshev(self, n, a, b):
-        """
-        Calculate the nodes and weights for Gauss-Chebyshev quadrature on interval [a, b].
-
-        Parameters:
-        n (int): Number of nodes.
-        a (float): Lower bound of the interval.
-        b (float): Upper bound of the interval.
-
-        Returns:
-        tuple: A tuple containing two lists, the nodes and their corresponding weights.
-        """
-        nodes = [(0.5 * ((b - a) * math.cos(math.pi * (k + 0.5) / n) + a + b)) for k in range(n)]
-        weights = [(math.pi / n) * 0.5 * (b - a)] * n  # Adjusted weights
-        return nodes, weights
-
 
 
 # %%
@@ -128,18 +112,16 @@ class GaussQuadrature(BasisPolynomials):
     Attributes:
     func (callable): The function to be integrated.
     n (int): Number of nodes.
-    method (str): The method to use ('legendre' or 'chebyshev').
     interval (tuple): The interval over which to integrate.
     """
     
-    def __init__(self, func, n, method="legendre", interval=(-1, 1)):
+    def __init__(self, func, n, interval=(-1, 1)):
         """
         Initialize the GaussQuadrature object.
 
         Parameters:
         func (callable): The function to be integrated.
         n (int): Number of nodes.
-        method (str): The method to use ('legendre' or 'chebyshev').
         interval (tuple): The interval over which to integrate.
         """
         super().__init__()
@@ -147,7 +129,6 @@ class GaussQuadrature(BasisPolynomials):
         self.n = n
         self.nodes = None
         self.weights = None
-        self.method = method
         self.interval = interval
 
     def generate_and_save(self, filename = 'nodes_and_weights.csv'):
@@ -190,12 +171,7 @@ class GaussQuadrature(BasisPolynomials):
         tuple: A tuple containing two lists, the nodes and their corresponding weights.
         """
 
-        if self.method == "legendre":
-            return self.legendre(self.n, self.interval[0], self.interval[1])
-        elif self.method == "chebyshev":
-            return self.chebyshev(self.n, self.interval[0], self.interval[1])
-        else:
-            raise ValueError("Unknown quadrature type. Please choose 'legendre' or 'chebyshev'.")
+        return self.legendre(self.n, self.interval[0], self.interval[1])
     
     def gauss_quadrature(self):
         """
@@ -207,7 +183,7 @@ class GaussQuadrature(BasisPolynomials):
 
         return sum(self.weights * self.func(self.nodes))
 
-def Gaussian_Quad(n, interval, func, method='legendre', filename='nodes_and_weights.csv'):
+def Gaussian_Quad(n, interval, func, filename='nodes_and_weights.csv'):
     """
     Perform Gaussian quadrature for numerical integration.
 
@@ -215,14 +191,13 @@ def Gaussian_Quad(n, interval, func, method='legendre', filename='nodes_and_weig
     n (int): Number of nodes.
     interval (tuple): The interval over which to integrate.
     func (callable): The function to be integrated.
-    method (str): The method to use ('legendre' or 'chebyshev').
     filename (str): Filename for saving/loading nodes and weights.
 
     Returns:
     tuple: Approximated integral value, nodes, and weights.
     """
     
-    quadrature = GaussQuadrature(func, n, method, interval)
+    quadrature = GaussQuadrature(func, n, interval)
     quadrature.generate_and_save(filename).load(filename)
     return quadrature.gauss_quadrature(), quadrature.nodes, quadrature.weights
 
