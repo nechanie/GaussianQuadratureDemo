@@ -131,36 +131,14 @@ class GaussQuadrature(BasisPolynomials):
         self.weights = None
         self.interval = interval
 
-    def generate_and_save(self, filename = 'nodes_and_weights.csv'):
+    def generate(self):
         """
-        Generate nodes and weights and save them to a CSV file.
-
-        Parameters:
-        filename (str): The filename to save the nodes and weights.
-
+        Generate nodes and weights and update class state.
         Returns:
         GaussQuadrature: Returns the instance itself for chaining methods.
         """
 
-        nodes, weights = self.nodes_and_weights()
-        # Creating a DataFrame and writing to CSV
-        df = pd.DataFrame({'Nodes': nodes, 'Weights': weights})
-        df.to_csv(filename, index=False)
-        return self
-
-    def load(self, filename = 'nodes_and_weights.csv'):
-        """
-        Load nodes and weights from a CSV file.
-
-        Parameters:
-        filename (str): The filename from which to load the nodes and weights.
-
-        Returns:
-        GaussQuadrature: Returns the instance itself for chaining methods.
-        """
-
-        df = pd.read_csv(filename)
-        self.nodes, self.weights = df['Nodes'].values, df['Weights'].values
+        self.nodes, self.weights = self.nodes_and_weights()
         return self
     
     def nodes_and_weights(self):
@@ -198,7 +176,7 @@ def Gaussian_Quad(n, interval, func, filename='nodes_and_weights.csv'):
     """
     
     quadrature = GaussQuadrature(func, n, interval)
-    quadrature.generate_and_save(filename).load(filename)
+    quadrature.generate()
     return quadrature.gauss_quadrature(), quadrature.nodes, quadrature.weights
 
 

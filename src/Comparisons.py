@@ -43,4 +43,4 @@ def compare_methods(func, interval, max_n):
 # # Calculate the approximate integral using SciPy's quad function
 
 # # Create visual comparison of various numerical integration methods
-# compare_methods(np.exp, (a, b), 7)
+# print(compare_methods(np.exp, (a, b), 7))
